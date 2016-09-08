@@ -1,0 +1,9 @@
+#set($confirmationUrl = "http://localhost:8080/spring-base/sign-up/email-confirmation/${user.username}/${user.hashCode()}")
+<html>
+    <body>
+		<div>
+    		<p>${body}</p>
+    		<a href="$confirmationUrl">${bodyLink}</a>
+		</div>
+    </body>
+</html>

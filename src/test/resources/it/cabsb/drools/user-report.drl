@@ -1,0 +1,33 @@
+package it.cabsb.drools
+import it.cabsb.model.User
+import it.cabsb.model.Role
+import it.cabsb.drools.Report
+
+rule "ListEnabledUsers"
+	when
+		$report : Report()
+		$user : User() from accumulate($i : User(enabled == true), randomSelect($i));
+	then
+		$report.addItem($user);
+		$report.addMessage($user.getUsername());
+		if($report.getItems().size() < $report.getMaxItemsSize())
+			retract($user);
+end
+
+rule "RoleAdminCount"
+	when
+		$report : Report()
+		$role : Role(authority == "ROLE_ADMIN")
+		accumulate($user : User(authorities contains $role), $result : count($user.getId()))
+	then
+		$report.addMessage("Number of admin " + $result);
+end
+
+rule "RoleUserCount"
+	when
+		$report : Report()
+		$role : Role(authority == "ROLE_USER")
+		accumulate($user : User(authorities contains $role), $result : count($user.getId()))
+	then
+		$report.addMessage("Number of user " + $result);
+end

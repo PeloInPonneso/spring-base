@@ -1,0 +1,30 @@
+package it.cabsb.drools
+import java.util.Date
+import it.cabsb.model.User
+import it.cabsb.drools.constraint.validator.Errors
+global it.cabsb.persistence.service.IUserService userService
+global org.slf4j.Logger log
+
+function Date currentTime(){
+	return new Date();
+}
+
+rule "Check User username"
+	when
+		$errors : Errors()
+		$user : User()
+		User(id != $user.id) from userService.loadUserByUsername($user.username)
+	then
+		log.info("Username already used");
+		$errors.addError($user, "username", "{it.cabsb.constraint.UsernameAlreadyUsed.message}");
+end
+
+rule "Check User birthDay"
+	when
+		$errors : Errors()
+		$user : User()
+		User($user.birthDay > currentTime())
+	then
+		log.info("User is born in the future");
+		$errors.addError($user, "birthDay", "{it.cabsb.constraint.UserBornInTheFuture.message}");
+end

@@ -1,0 +1,19 @@
+PersistenceHibernateConfig
+1. SecurityConfig - org.apache.tomcat.dbcp.dbcp.BasicDataSource
+2. AbstractHibernateDao
+	@Autowired
+	private SessionFactory sessionFactory;
+	
+	protected final Session getCurrentSession() {
+    	return sessionFactory.getCurrentSession();
+    }
+
+PersistenceJpaConfig
+1. SecurityConfig - javax.sql.DataSource
+2. AbstractHibernateDao
+	@PersistenceContext(unitName="jpa-persistence")
+	private EntityManager entityManager;
+	
+	protected final Session getCurrentSession() {
+    	return (Session) entityManager.getDelegate();
+    }
